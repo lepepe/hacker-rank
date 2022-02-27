@@ -1,0 +1,54 @@
+#+TITLE: HACKER RANK
+#+AUTHOR: Jose Perez
+#+EMAIL: lepepe@hey.com
+
+** Basic Select
+
+** Advanced Join
+*** SQL Project Planning
+
+You are given a table, Projects, containing three columns: Task_ID, Start_Date and End_Date. It is guaranteed that the difference between the End_Date and the Start_Date is equal to 1 day for each row in the table.
+
+| Column     | Type    |
+| Task_ID    | Integer |
+| Start_Date | Date    |
+| End_Date   | Date    |
+
+If the End_Date of the tasks are consecutive, then they are part of the same project. Samantha is interested in finding the total number of different projects completed.\\
+Write a query to output the start and end dates of projects listed by the number of days it took to complete the project in ascending order. If there is more than one project that have the same number of completion days, then order by the start date of the project.\\
+
+#+begin_src sql
+WITH Project_Start_Date as(
+    SELECT
+            Start_Date,
+            Rank() OVER (ORDER BY Start_Date) as Rank_Start
+    FROM    Projects
+    WHERE   Start_Date NOT IN(SELECT End_Date FROM Projects)
+
+),
+
+Project_End_Date as (
+    SELECT
+        End_Date,
+        Rank() OVER (ORDER BY End_Date) as Rank_End
+FROM    Projects
+WHERE   End_Date NOT IN(SELECT Start_Date FROM Projects)
+)
+
+SELECT
+        Start_Date,
+        End_Date
+FROM    Project_Start_Date, Project_End_Date
+WHERE   Rank_Start = Rank_End
+
+ORDER BY
+DATEDIFF(day,Start_Date,End_Date),
+Start_Date
+#+end_src
+
+#+begin_src
+2015-10-28 2015-10-29
+2015-10-30 2015-10-31
+2015-10-13 2015-10-15
+2015-10-01 2015-10-04
+#+end_src
