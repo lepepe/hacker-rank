@@ -46,9 +46,77 @@ DATEDIFF(day,Start_Date,End_Date),
 Start_Date
 #+end_src
 
+Sample Output
 #+begin_src
 2015-10-28 2015-10-29
 2015-10-30 2015-10-31
 2015-10-13 2015-10-15
 2015-10-01 2015-10-04
+#+end_src
+
+*** Placements
+You are given three tables: Students, Friends and Packages. Students contains two columns: ID and Name. Friends contains two columns: ID and Friend_ID (ID of the ONLY best friend). Packages contains two columns: ID and Salary (offered salary in $ thousands per month).
+
+Students
+| Column | Type   |
+|--------+--------|
+| ID     | Intger |
+| Name   | String |
+
+Friends
+| Column    | Type    |
+|-----------+---------|
+| ID        | Integer |
+| Friend_ID | Integer |
+
+Packages
+| Column | Type    |
+|--------+---------|
+| ID     | Integer |
+| Salary | Float   |
+
+Write a query to output the names of those students whose best friends got offered a higher salary than them. Names must be ordered by the salary amount offered to the best friends. It is guaranteed that no two students got same salary offer.
+
+#+begin_src sql
+SELECT s.name
+FROM Students s
+    JOIN Friends f ON s.id = f.id
+    JOIN Packages p1 ON f.id = p1.id
+    JOIN packages p2 ON f.friend_id = p2.id
+WHERE p1.Salary < p2.Salary
+ORDER BY p2.Salary;
+#+end_src
+
+Sample Output
+#+begin_src
+Samantha
+Julia
+Scarlet
+#+end_src
+
+*** Symmetric Pairs
+You are given a table, Functions, containing two columns: X and Y.
+
+| Column | Type    |
+|--------+---------|
+| X      | Integer |
+| Y      | Integer |
+
+Two pairs (X1, Y1) and (X2, Y2) are said to be symmetric pairs if X1 = Y2 and X2 = Y1.\\
+Write a query to output all such symmetric pairs in ascending order by the value of X. List the rows such that X1 ≤ Y1.
+
+#+begin_src sql
+SELECT fa.x, fa.y
+FROM Functions fa
+    JOIN Functions fb ON fa.x = fb.y AND fa.y = fb.x
+GROUP BY fa.x, fa.y
+HAVING COUNT(fa.x) > 1 OR fa.x < fa.y
+ORDER BY fa.x
+#+end_src
+
+Sample Output
+#+begin_src
+20 20
+20 21
+22 23
 #+end_src
