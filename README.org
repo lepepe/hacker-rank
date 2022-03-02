@@ -2,6 +2,11 @@
 #+AUTHOR: Jose Perez
 #+EMAIL: lepepe@hey.com
 
+* Table of Contents
+  - [[#basic-select][Basic Select]]
+  - [[#basic-join][Basic Join]]
+  - [[#advanced-join][Advanced Join]]
+
 ** Basic Select
 
 ** Basic Join
@@ -76,7 +81,6 @@ Given the =CITY= and =COUNTRY= tables, query the names of all the continents (CO
 | CAPITAL       | VARCHAR2(4)  |
 | CODE2         | VARCHAR2(2)  |
 
-
 #+begin_src sql
 SELECT co.CONTINENT, CAST(AVG(c.POPULATION) AS INT)
 FROM COUNTRY co
@@ -84,6 +88,94 @@ JOIN CITY c ON c.COUNTRYCODE = co.CODE
 GROUP BY co.CONTINENT
 #+end_src
 
+*** Population Census
+Given the CITY and COUNTRY tables, query the sum of the populations of all cities where the CONTINENT is 'Asia'.\\
+*Note:* CITY.CountryCode and COUNTRY.Code are matching key columns.
+
+- CITY
+| Field       | Type         |
+|-------------+--------------|
+| ID          | NUMBER       |
+| NAME        | VARCHAR2(17) |
+| COUNTRYCODE | VARCHAR2(3)  |
+| DISTRICT    | VARCHAR2(20) |
+| POPULATION  | NUMBER       |
+
+- COUNTRY
+| Field         | Type         |
+|---------------+--------------|
+| CODE          | VARCHAR2(3)  |
+| NAME          | VARCHAR2(44) |
+| CONTINENT     | VARCHAR2(13) |
+| REGION        | VARCHAR2(25) |
+| SURFACEAREA   | NUMBER       |
+| INDEPYEAR     | VARCHAR2(5)  |
+| POPULATION    | NUMBER       |
+| LIFEEXPENTACY | VARCHAR2(4)  |
+| GNP           | NUMBER       |
+| GNPOLD        | NUMBER       |
+| LOCALNAME     | VARCHAR2(44) |
+| GOVERMENTFROM | VARCHAR2(44) |
+| HEADOFSTATE   | VARCHAR2(32) |
+| CAPITAL       | VARCHAR2(4)  |
+| CODE2         | VARCHAR2(2)  |
+
+#+begin_src sql
+SELECT SUM(c.POPULATION)
+FROM CITY c
+JOIN COUNTRY co ON co.CODE = c.COUNTRYCODE
+WHERE co.CONTINENT = 'Asia'
+#+end_src
+
+*** The Report
+You are given two tables: Students and Grades. Students contains three columns ID, =Name= and =Marks=.
+
+| Column | Type    |
+|--------+---------|
+| ID     | Integer |
+| Name   | String  |
+| Marks  | Integer |
+
+Grades contains the following data:
+
+| Grades | Min_Mark | Max_Mark |
+|--------+----------+----------|
+|      1 |        0 |        9 |
+|      2 |       10 |       19 |
+|      3 |       20 |       29 |
+|      4 |       30 |       39 |
+|      5 |       40 |       49 |
+|      6 |       50 |       59 |
+|      7 |       60 |       69 |
+|      8 |       70 |       79 |
+|      9 |       80 |       89 |
+|     10 |       90 |      100 |
+
+Ketty gives Eve a task to generate a report containing three columns: Name, Grade and Mark. Ketty doesn't want the NAMES of those students who received a grade lower than 8. The report must be in descending order by grade -- i.e. higher grades are entered first. If there is more than one student with the same grade (8-10) assigned to them, order those particular students by their name alphabetically. Finally, if the grade is lower than 8, use "NULL" as their name and list them by their grades in descending order. If there is more than one student with the same grade (1-7) assigned to them, order those particular students by their marks in ascending order.
+
+Write a query to help Eve.
+
+#+begin_src sql
+SELECT
+    CASE
+    WHEN g.Grade < 8 THEN NULL
+    ELSE s.Name
+    END AS Name,
+    g.Grade, s.Marks
+FROM Students s
+JOIN Grades g ON s.Marks BETWEEN g.Min_Mark AND g.Max_Mark
+ORDER BY g.Grade DESC, s.Name ASC, s.Marks ASC;
+#+end_src
+
+Sample Output
+#+begin_src
+Maria 10 99
+Jane 9 81
+Julia 9 88
+Scarlet 8 78
+NULL 7 63
+NULL 7 68
+#+end_src
 
 ** Advanced Join
 *** SQL Project Planning
