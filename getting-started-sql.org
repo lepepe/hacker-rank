@@ -253,43 +253,61 @@ EXEC SelectAllCustomers @City = 'Pembroke Pines', @PostalCode = '33026';
 ** Create Views
 ** Create Triggers
 
-** Partices
+
+* Partices
+
 #+begin_src sql
+CREATE DATABASE Testing;
+USE Testing
+GO;
+
 CREATE TABLE Users (
     ID int PRIMARy KEY,
     FirstName varchar(255),
     LastName varchar(255),
     Address varchar(255),
-    email varchar(255)
+    Email varchar(255)
 );
 
 CREATE TABLE Products (
     ID int PRIMARY KEY,
     Description varchar(255) NOT NULL,
     UOM varchar(40) NOT NULL,
-    OnHand decimal(9,4) DEFAULT(0),
+    OnHand decimal(9,4) CHECK (Onhand>=0),
     CreatedDate date DEFAULT GETDATE()
-)
+);
 
 CREATE TABLE Orders (
-    ID int PRIMARY KEY,
+    ID int,
     UserID int FOREIGN KEY REFERENCES Users(ID),
-    ProductID int FOREIGN KEY REFERENCES Products(ID),
-    TotalOrder decimal(9,4),
+    ProductID int,
+    TotalOrder decimal(9,2),
     ShipTo varchar(255),
     PurchaseOrder varchar(20),
     CreatedDate date DEFAULT GETDATE()
-)
-CREATE NONCLUSTERED INDEX IX_User_ID ON Orders (UserID ASC)
-CREATE NONCLUSTERED INDEX IX_Product_ID ON Orders (ProductID ASC)
+);
 
-SELECT
-    o.ShipTo,
-    o.TotalOrder,
-    u.FirstName,
-    p.[Description],
-    o.CreatedDate
-FROM Orders o
-JOIN Products p ON o.ProductID = p.ID
-JOIN Users u ON o.UserID = u.ID
+-- Set Foreign Key Products(ID)
+ALTER TABLE Orders
+ADD CONSTRAINT FK_Orders_Product_ID REFERENCES Products(ID);
+
+-- Table Orders was creeated without an IDENTITY column
+-- Drop existing column that was suposed to be the ID and recreated it with the proper IDENTOTY keyword
+DROP COLUMN ID FROM TABLE Orders;
+ALTER TABLE Orders ADD ID int PRIMARY KEY IDENTITY(1,1) NOT NULL;
+
+-- Add a new column to identify the Orders's ShipVia
+ALTER TABLE ADD Shipvia varchar(255) NOT NULL;
+CREATE NONCLUSTERED INDEX ID_ShipVia ON Orders (Shipvia ASC);
+
+-- Create Non Clustered Index to for UserID and ProductsID
+CREATE NONCLUSTERED INDEX IX_User_ID ON Orders (UserID ASC);
+CREATE NONCLUSTERED INDEX IX_Product_ID ON Orders (ProductID ASC);
+
+-- Stored Procedures
+CREATE PROCEDURE SelectAllShipVia @ShipVia varchar(255)
+AS
+SELECT * FROM Orders WHERE Shipvia = @City
+
+EXEC SelectAllCustomers @City = 'Pembroke Pines'
 #+end_src
