@@ -1,0 +1,295 @@
+* Getting Started Guide
+** Databases
+*** Create DB
+The =CREATE DATABASE= statement is used to create a new SQL database.
+
+#+begin_src sql
+CREATE DATABASE MyDBName;
+#+end_src
+
+*** Drop DB
+The =DROP DATABASE= statement is used to drop an existing SQL database.
+
+#+begin_src sql
+DROP DATABASE MyDBName;
+#+end_src
+
+*** Backup DB
+The =BACKUP DATABASE= statement is used in SQL Server to create a full back up of an existing SQL database.
+
+#+begin_src sql
+BACKUP DATABASE MyDBName
+TO DISK = 'D:\backups\MyDBName.bak'
+WITH DIFFERENTIAL;
+#+end_src
+
+A differential back up only backs up the parts of the database that have changed since the last full database backup.
+To creates a full back up of the existing database *MyDBName* exclude the =WITH DIFFERENTIAL=.
+
+** SQL Server Data Types
+The data type of a column defines what value the column can hold: integer, character, money, date and time, binary, and so on.
+
+Each column in a database table is required to have a name and a data type.
+
+An SQL developer must decide what type of data that will be stored inside each column when creating a table. The data type is a guideline for SQL to understand what type of data is expected inside of each column, and it also identifies how SQL will interact with the stored data.
+
+*** String Data Types
+
+| Data type      | Description                     | Max size                 | Storage                   |
+|----------------+---------------------------------+--------------------------+---------------------------|
+| char(n)        | Fixed width character string    | 8,000 characters         | Defined width             |
+| varchar(n)     | Variable width character string | 8,000 characters         | 2 bytes + number of chars |
+| varchar(max)   | Variable width character string | 1,073,741,824 characters | 2 bytes + number of chars |
+| text           | Variable width character string | 2GB of text data         | 4 bytes + number of chars |
+| nchar          | Fixed width Unicode string      | 4,000 characters         | Defined width x 2         |
+| nvarchar       | Variable width Unicode string   | 4,000 characters         |                           |
+| nvarchar(max)  | Variable width Unicode string   | 536,870,912 characters   |                           |
+| ntext          | Variable width Unicode string   | 2GB of text data         |                           |
+| binary(n)      | Fixed width binary string       | 8,000 bytes              |                           |
+| varbinary      | Variable width binary string    | 8,000 bytes              |                           |
+| varbinary(max) | Variable width binary string    | 2GB                      |                           |
+| image          | Variable width binary string    | 2GB                      |                           |
+
+*** Numeric Data Types
+
+| Data type    | Description                                                                                                                                                                              | Storage      |
+|--------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------|
+| bit          | Integer that can be 0, 1, or NULL                                                                                                                                                        |              |
+| tinyint      | Allows whole numbers from 0 to 255                                                                                                                                                       | 1 byte       |
+| smallint     | Allows whole numbers between -32,768 and 32,767                                                                                                                                          | 2 bytes      |
+| int          | Allows whole numbers between -2,147,483,648 and 2,147,483,647                                                                                                                            | 4 bytes      |
+| bigint       | Allows whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807                                                                                                    | 8 bytes      |
+| decimal(p,s) | Fixed precision and scale numbers.                                                                                                                                                       | 5-17 bytes   |
+|              | Allows numbers from -10^38 +1 to 10^38 --1.                                                                                                                                              |              |
+|              |                                                                                                                                                                                          |              |
+|              | The p parameter indicates the maximum total number of digits that can be stored (both to the left and to the right of the decimal point). p must be a value from 1 to 38. Default is 18. |              |
+|              |                                                                                                                                                                                          |              |
+|              | The s parameter indicates the maximum number of digits stored to the right of the decimal point. s must be a value from 0 to p. Default value is 0                                       |              |
+| numeric(p,s) | Fixed precision and scale numbers.                                                                                                                                                       | 5-17 bytes   |
+|              | Allows numbers from -10^38 +1 to 10^38 --1.                                                                                                                                              |              |
+|              |                                                                                                                                                                                          |              |
+|              | The p parameter indicates the maximum total number of digits that can be stored (both to the left and to the right of the decimal point). p must be a value from 1 to 38. Default is 18. |              |
+|              |                                                                                                                                                                                          |              |
+|              | The s parameter indicates the maximum number of digits stored to the right of the decimal point. s must be a value from 0 to p. Default value is 0                                       |              |
+| smallmoney   | Monetary data from -214,748.3648 to 214,748.3647                                                                                                                                         | 4 bytes      |
+| money        | Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807                                                                                                                 | 8 bytes      |
+| float(n)     | Floating precision number data from -1.79E + 308 to 1.79E + 308.                                                                                                                         | 4 or 8 bytes |
+|              | The n parameter indicates whether the field should hold 4 or 8 bytes. float(24) holds a 4-byte field and float(53) holds an 8-byte field. Default value of n is 53.                      |              |
+| real         | Floating precision number data from -3.40E + 38 to 3.40E + 38                                                                                                                            | 4 bytes      |
+
+*** Date and Time Data Types
+
+| Data type      | Description                                                                                                                         | Storage    |
+|----------------+-------------------------------------------------------------------------------------------------------------------------------------+------------|
+| datetime       | From January 1, 1753 to December 31, 9999 with an accuracy of 3.33 milliseconds                                                     | 8 bytes    |
+| datetime2      | From January 1, 0001 to December 31, 9999 with an accuracy of 100 nanoseconds                                                       | 6-8 bytes  |
+| smalldatetime  | From January 1, 1900 to June 6, 2079 with an accuracy of 1 minute                                                                   | 4 bytes    |
+| date           | Store a date only. From January 1, 0001 to December 31, 9999                                                                        | 3 bytes    |
+| time           | Store a time only to an accuracy of 100 nanoseconds                                                                                 | 3-5 bytes  |
+| datetimeoffset | The same as datetime2 with the addition of a time zone offset                                                                       | 8-10 bytes |
+| timestamp      | Stores a unique number that gets updated every time a row gets created or modified. Each table may have only one timestamp variable |            |
+
+** Tables
+The =CREATE TABLE= statement is used to create a new table in a database.
+
+*** Create a Table
+#+begin_src sql
+CREATE TABLE Users (
+    UserID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255)
+);
+#+end_src
+
+The *column* parameters specify the names of the columns of the table.
+The *datatype* parameter specifies the type of data the column can hold (e.g. varchar, integer, date, etc.).
+
+#+begin_src sql
+CREATE TABLE Users (
+    UserID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255)
+);
+#+end_src
+
+A table can also be created from another table:
+#+begin_src sql
+CREATE TABLE TestCustomers AS
+SELECT customername, contactname
+FROM customers;
+#+end_src
+
+*** Drop Table
+The =DROP TABLE= statement is used to drop an existing table in a database.
+
+#+begin_src sql
+DROP TABLE Customers;
+#+end_src
+
+The =TRUNCATE TABLE= statement is used to delete the data inside a table, but not the table itself.
+
+#+begin_src sql
+TRUNCATE TABLE Customers;
+#+end_src
+
+*** Alter Table
+The =ALTER TABLE= statement is used to add, delete, or modify columns in an existing table.
+The =ALTER TABLE= statement is also used to add and drop various constraints on an existing table.
+
+- Add a new column
+#+begin_src sql
+ALTER TABLE Customers
+ADD Email varchar(255);
+#+end_src
+
+- Drop an existing column
+#+begin_src sql
+ALTER TABLE Customers
+DROP COLUMN Email;
+ #+end_src
+
+- Modify an existing column within a table
+#+begin_src sql
+ALTER TABLE Customers
+ALTER COLUMN Email nvarchar(4000);
+#+end_src
+
+*** Constraints
+Constraints can be specified when the table is created with the =CREATE TABLE= statement, or after the table is created with the =ALTER TABLE= statement.
+
+- =NOT NULL= - Ensures that a column cannot have a NULL value
+- =UNIQUE= - Ensures that all values in a column are different
+- =PRIMARY KEY= - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+- =FOREIGN KEY= - Prevents actions that would destroy links between tables
+- =CHECK= - Ensures that the values in a column satisfies a specific condition
+- =DEFAULT= - Sets a default value for a column if no value is specified
+- =CREATE INDEX= - Used to create and retrieve data from the database very quickly
+
+CREATE TABLE
+#+begin_src sql
+CREATE TABLE Users (
+    ID int NOT NULL PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int CHECK (Age>=18)
+    CreatedDate date DEFAULT GETDATE()
+    -- Also create a CHECK and DEFAULT constraint
+);
+#+end_src
+
+To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns (composite key), use:
+#+begin_src sql
+CREATE TABLE voting (
+  QuestionID NUMERIC,
+  MemberID NUMERIC,
+  PRIMARY KEY (QuestionID, MemberID)
+);
+#+end_src
+
+ALTER TABLE Seting a =PRIMARY KEY= on existing table:
+#+begin_src sql
+ALTER TABLE Persons
+ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+#+end_src
+
+** Create PRIMARY KEY
+Create a Primary Key on a heap table
+
+#+begin_src sql
+ALTER TABLE Users ADD CONSTRAINT PK_User_ID
+PRIMARY KEY CLUSTERED (User_ID ASC);
+#+end_src
+
+** Create Clustered Index
+A clustered index is a special index which physically orders the data according to the indexed columns.
+
+*** Adding clustered index through constraint
+#+begin_src sql
+ALTER TABLE Sales.Currency ADD CONSTRAINT PK_Currency_CurrencyCode
+PRIMARY KEY CLUSTERED (CurrencyCode ASC);
+#+end_src
+
+*** Adding clustered index without constraint
+#+begin_src sql
+CREATE CLUSTERED INDEX IX_Person_LastNameFirstName ON Person.Person (LastName ASC,FirstName ASC);
+
+CREATE NONCLUSTERED INDEX <index_name> ON <table_name> (column)
+#+end_src
+
+** Create Store Procedures
+A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+So if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+You can also pass parameters to a stored procedure, so that the stored procedure can act based on the parameter value(s) that is passed.
+
+Syntax:
+#+begin_src sql
+CREATE PROCEDURE procedure_name
+AS
+sql_statement
+GO;
+#+end_src
+
+Execute:
+#+begin_src sql
+EXEC procedure_name;
+#+end_src
+
+Setting store procedure with multiples parameters:
+#+begin_src sql
+CREATE PROCEDURE SelectAllCustomers @City nvarchar(30), @PostalCode nvarchar(10)
+AS
+SELECT * FROM Customers WHERE City = @City AND PostalCode = @PostalCode
+GO;
+#+end_src
+
+#+begin_src sql
+EXEC SelectAllCustomers @City = 'Pembroke Pines', @PostalCode = '33026';
+#+end_src
+
+** Create Views
+** Create Triggers
+
+** Partices
+#+begin_src sql
+CREATE TABLE Users (
+    ID int PRIMARy KEY,
+    FirstName varchar(255),
+    LastName varchar(255),
+    Address varchar(255),
+    email varchar(255)
+);
+
+CREATE TABLE Products (
+    ID int PRIMARY KEY,
+    Description varchar(255) NOT NULL,
+    UOM varchar(40) NOT NULL,
+    OnHand decimal(9,4) DEFAULT(0),
+    CreatedDate date DEFAULT GETDATE()
+)
+
+CREATE TABLE Orders (
+    ID int PRIMARY KEY,
+    UserID int FOREIGN KEY REFERENCES Users(ID),
+    ProductID int FOREIGN KEY REFERENCES Products(ID),
+    TotalOrder decimal(9,4),
+    ShipTo varchar(255),
+    PurchaseOrder varchar(20),
+    CreatedDate date DEFAULT GETDATE()
+)
+CREATE NONCLUSTERED INDEX IX_User_ID ON Orders (UserID ASC)
+CREATE NONCLUSTERED INDEX IX_Product_ID ON Orders (ProductID ASC)
+
+SELECT
+    o.ShipTo,
+    o.TotalOrder,
+    u.FirstName,
+    p.[Description],
+    o.CreatedDate
+FROM Orders o
+JOIN Products p ON o.ProductID = p.ID
+JOIN Users u ON o.UserID = u.ID
+#+end_src
